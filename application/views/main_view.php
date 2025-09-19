@@ -25,6 +25,11 @@
 			<span class="icon-badge text-center"><i class="fa fa-tasks fa-lg"></i><br/></span>
 			<span class="menu-text text-left">ตัดยอดฝากขาย (WM)</span>
 		</div>
+
+		<div class="menu-card" style="border-color: #4CAF50; color:#4CAF50;" onclick="goTo('consignment/view_detail/12345678')">			
+			<span class="icon-badge text-center"><i class="fa fa-tasks fa-lg"></i><br/></span>
+			<span class="menu-text text-left">ทดสอบกล้อง</span>
+		</div>
 	</div>
 </div>
 

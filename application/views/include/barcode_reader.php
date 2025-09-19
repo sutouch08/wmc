@@ -24,7 +24,7 @@
     align-items: center;
   }
 
-  #cam {
+  /* #cam {
     position: fixed;
     top: 45px;
     width: 100vw;
@@ -33,11 +33,11 @@
     justify-content: center;
     align-items: center;
     z-index: 13;
-  }
+  } */
 
   #reader {
-    width: 150px;
-    height: 150px;
+    width: 100vw;
+    height: 100vh;
     background-color: white;
   }
 </style>

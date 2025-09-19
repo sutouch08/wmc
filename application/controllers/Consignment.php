@@ -45,8 +45,10 @@ class Consignment extends PS_Controller
 
 	public function view_detail($code)
 	{
+		$doc = (object)['code' => 'WD-12345678', 'status' => 0, 'zone_code' => 'AFG-1112'];
+
     $ds = array(
-      'doc' => $doc = $this->consignment_model->get($code),
+      'doc' => $doc, //$doc = $this->consignment_model->get($code),
       'details' => $this->consignment_model->get_details($code)
     );
 
@@ -153,7 +155,7 @@ class Consignment extends PS_Controller
 	public function get_item_by_barcode()
   {
 		$sc = TRUE;
-		
+
     if($this->input->get('barcode'))
     {
       // $this->load->model('stock/stock_model');

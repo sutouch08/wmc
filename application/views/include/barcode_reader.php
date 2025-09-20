@@ -106,6 +106,13 @@
     display: none;
   }
 
+  #qr-canvas {
+    width:250px;
+    height: 250px;
+    position: absolute;
+    top: calc(50vh - 170px);
+  }
+
 </style>
 
 <input type="hidden" id="scan-result" />

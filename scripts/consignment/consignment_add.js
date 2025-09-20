@@ -215,6 +215,11 @@ function getItemByBarcode() {
 }
 
 
+function closeItemPanel() {
+  $('#item-panel').addClass('hide');
+}
+
+
 function zoneInit(customer_code, edit) {
   if(edit) {
     $('#zone-code').val('');

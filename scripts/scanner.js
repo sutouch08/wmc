@@ -38,7 +38,7 @@ function readerInit() {
   scanner = new Html5Qrcode("reader", {formatsToSupport: formatToSupport});
 
   config = {
-    fps: 10,
+    fps: 60,
     qrbox: {width: qrWidth, height: qrHeight, center: (scanType === 'barcode')},
     experimentalFeatures: {
       useBarCodeDetectorIfSupported: true

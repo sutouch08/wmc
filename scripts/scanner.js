@@ -1,6 +1,6 @@
 var scanner;
 var config;
-var scanType = "barcode"; //-- qrcode, barcode, both
+// var scanType = "barcode"; //-- qrcode, barcode, both
 
 window.addEventListener('load', () => {
   readerInit();
@@ -19,27 +19,27 @@ function readerInit() {
   let qrWidth = 250;
   let qrHeight = 250;
 
-  if( scanType == 'barcode') {
-    formatToSupport = [
-      Html5QrcodeSupportedFormats.EAN_13,
-      Html5QrcodeSupportedFormats.CODE_39,
-      Html5QrcodeSupportedFormats.CODE_93,
-      Html5QrcodeSupportedFormats.CODE_128
-    ];
-
-    qrWidth = 250;
-    qrHeight = 250;
-  }
-
-  if( scanType == 'qrcode') {
-    formatToSupport = [Html5QrcodeSupportedFormats.QR_CODE];
-  }
+  // if( scanType == 'barcode') {
+  //   formatToSupport = [
+  //     Html5QrcodeSupportedFormats.EAN_13,
+  //     Html5QrcodeSupportedFormats.CODE_39,
+  //     Html5QrcodeSupportedFormats.CODE_93,
+  //     Html5QrcodeSupportedFormats.CODE_128
+  //   ];
+  //
+  //   qrWidth = 250;
+  //   qrHeight = 250;
+  // }
+  //
+  // if( scanType == 'qrcode') {
+  //   formatToSupport = [Html5QrcodeSupportedFormats.QR_CODE];
+  // }
 
   scanner = new Html5Qrcode("reader", {formatsToSupport: formatToSupport});
 
   config = {
     fps: 60,
-    qrbox: {width: qrWidth, height: qrHeight, center: (scanType === 'barcode')},
+    qrbox: {width: qrWidth, height: qrHeight, center: false},
     experimentalFeatures: {
       useBarCodeDetectorIfSupported: true
     }

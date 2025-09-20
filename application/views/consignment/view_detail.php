@@ -12,7 +12,7 @@
 </div>
 <div class="divider-hidden"></div>
 <div class="row">
-  <div class="page-wrap listing">
+  <div class="page-wrap listing" id="detail-table">
     <?php $no = 1; ?>
 		<?php $totalQty = 0; ?>
 		<?php $totalAmount = 0; ?>
@@ -26,15 +26,19 @@
 							id="list-<?php echo $rs->id; ?>"
 							data-code="<?php echo $rs->product_code; ?>"
 							data-name="<?php echo $rs->product_name; ?>"
-							data-qty="<?php echo number($rs->qty); ?>"
 							value="<?php echo $rs->id; ?>"/>
 							<div class="display-inline-block width-100">
 								<span class="display-block font-size-12"><?php echo $rs->product_code; ?></span>
 								<span class="display-block font-size-11"><?php echo $rs->product_name; ?></span>
-								<span class="float-left font-size-11 width-50">Price: <?php echo number($rs->price, 2); ?></span>
+								<span class="float-left font-size-11 width-15">Price:</span>
+								<input type="text" class="float-left font-size-11 text-label padding-0 width-35 price"
+								id="price-<?php echo $rs->id; ?>" data-id="<?php echo $rs->id; ?>"
+								value="<?php echo number($rs->price, 2); ?>" readonly/>
 								<span class="float-left font-size-11 width-50">Disc.: <?php echo $rs->discount; ?></span>
 								<span class="float-left font-size-11 width-15">QTY:</span>
-								<input type="text" class="float-left font-size-11 text-label padding-0 width-35 qty" id="qty-<?php echo $rs->id; ?>" value="<?php echo number($rs->qty); ?>" readonly/>
+								<input type="text" class="float-left font-size-11 text-label padding-0 width-35 qty"
+								id="qty-<?php echo $rs->id; ?>" data-id="<?php echo $rs->id; ?>"
+								value="<?php echo number($rs->qty); ?>" readonly/>
 								<span class="float-left font-size-11 width-15">Amnt:</span>
 								<input type="text" class="float-left font-size-11 text-label padding-0 width-35 amount" id="amount-<?php echo $rs->id; ?>" value="<?php echo number($rs->amount, 2); ?>" readonly/>
 							</div>
@@ -76,9 +80,38 @@
 	</div>
 </div>
 
+<script id="item-template" type="text/x-handlebarsTemplate">
+	<div class="list-block" id="list-block-{{id}}" onclick="toggleActive({{id}})">
+		<div class="list-link" >
+			<div class="list-link-inner width-100">
+				<div class="margin-right-10 no" id="no-{{id}}"></div>
+				<input type="checkbox" class="chk hide"
+				id="list-{{id}}"
+				data-code="{{product_code}}"
+				data-name="{{product_name}}"
+				value="{{id}}"/>
+
+				<div class="display-inline-block width-100">
+					<span class="display-block font-size-12">{{product_code}}</span>
+					<span class="display-block font-size-11">{{product_name}}</span>
+					<span class="float-left font-size-11 width-15">Price:</span>
+					<input type="text" class="float-left font-size-11 text-label padding-0 width-35 price" 
+					id="price-{{id}}" data-id="{{id}}" value="{{price}}" readonly/>
+					<span class="float-left font-size-11 width-50">Disc.: {{discount}}</span>
+					<span class="float-left font-size-11 width-15">QTY:</span>
+					<input type="text" class="float-left font-size-11 text-label padding-0 width-35 qty"
+					id="qty-{{id}}" data-id="{{id}}" value="{{qty}}" readonly/>
+					<span class="float-left font-size-11 width-15">Amnt:</span>
+					<input type="text" class="float-left font-size-11 text-label padding-0 width-35 amount" id="amount-{{id}}" value="{{amount}}" readonly/>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+
+
 <?php $this->load->view('consignment/item_panel'); ?>
 <?php $this->load->view('consignment/footer_menu'); ?>
-
 <?php $this->load->view('include/barcode_reader'); ?>
 
 <script src="<?php echo base_url(); ?>scripts/consignment/consignment.js?v=<?php echo date('Ymd'); ?>"></script>

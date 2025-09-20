@@ -10,13 +10,13 @@
 
   .item-input {
     margin-top: 45px;
-    height: calc(100vh - 140px);
+    height: calc(100vh - 170px);
   }
 
   .submit-btn {
     position: absolute;
     bottom: 0px;
-    padding: 30px 15px;
+    padding: 30px 15px 60px;
     border-top: 1px solid #ddd;
   }
 </style>
@@ -29,31 +29,31 @@
   <div class="col-xs-12 page-wrap item-input">
     <div class="col-xs-12 fi">
       <label>Barcode</label>
-      <input type="text" class="form-control" id="barcode"  value="" readonly />
+      <input type="text" class="form-control c" id="barcode"  value="" readonly />
     </div>
     <div class="col-xs-12 fi">
       <label>SKU</label>
-      <input type="text" class="form-control" id="item-code"  value="" readonly/>
+      <input type="text" class="form-control c" id="item-code"  value="" readonly/>
     </div>
     <div class="col-xs-12 fi">
       <label>Description</label>
-      <input type="text" class="form-control" id="item-name"  value="" readonly/>
+      <input type="text" class="form-control c" id="item-name"  value="" readonly/>
     </div>
     <div class="col-xs-6 fi">
       <label>Price</label>
-      <input type="text" class="form-control text-center" id="item-price"  value="" readonly/>
+      <input type="text" class="form-control text-center c" id="item-price"  value="" readonly/>
     </div>
     <div class="col-xs-6 fi">
       <label>In Stock</label>
-      <input type="text" class="form-control text-center" id="stock-qty"  value="0" readonly/>
+      <input type="text" class="form-control text-center c" id="stock-qty"  value="0" readonly/>
     </div>
     <div class="col-xs-6 fi">
       <label>Qty</label>
-      <input type="text" class="form-control text-center" inputmode="numeric" id="qty"  value="1" />
+      <input type="text" class="form-control text-center c" inputmode="numeric" id="qty"  value="1" />
     </div>
     <div class="col-xs-6 fi">
       <label>Amount</label>
-      <input type="text" class="form-control text-center" id="amount"  value="0" />
+      <input type="text" class="form-control text-center c" id="amount"  value="0" />
     </div>
 
     <input type="hidden" id="count-stock" value="1" />

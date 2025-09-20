@@ -91,12 +91,162 @@ class Consignment extends PS_Controller
 	}
 
 
+	public function add_detail()
+	{
+		$sc = TRUE;
+		$ds = json_decode($this->input->post('data'));
+
+		if( ! empty($ds))
+		{
+			$code = $ds->code;
+
+			$item = $this->products_model->get($ds->product_code);
+
+			if(empty($item))
+			{
+				$sc = FALSE;
+				$this->error = "รหัสสินค้าไม่ถูกต้อง";
+			}
+
+			if($sc === TRUE)
+			{
+				$doc = $this->consignment_model->get($ds->code);
+
+				if(empty($doc))
+				{
+					$sc = FALSE;
+					$this->error = "เลขที่เอกสารไม่ถูกต้อง";
+				}
+			}
+
+			if($sc === TRUE)
+			{
+				if($doc->status != 0)
+				{
+					$sc = FALSE;
+					set_error('status');
+				}
+			}
+
+			if($sc === TRUE)
+			{
+				$this->load->model('stock/stock_model');
+				$this->load->model('masters/warehouse_model');
+				$this->load->model('masters/zone_model');
+
+				$product_code = $ds->product_code;
+				$price = $ds->price;
+				$qty = $ds->qty;
+				$amount = $price * $qty;
+				$discLabel = $ds->disc;
+
+				$gb_auz = getConfig('ALLOW_UNDER_ZERO');
+				$wh_auz = $this->warehouse_model->is_auz($doc->warehouse_code);
+				$auz = $gb_auz == 1 ? TRUE : $wh_auz;
+
+				$input_type = 1;  //--- 1 = key in , 2 = load diff, 3 = excel
+				$stock = $item->count_stock == 1 ? $this->stock_model->get_consign_stock_zone($doc->zone_code, $item->code) : 10000000;
+				$c_qty = $item->count_stock == 1 ? $this->consignment_model->get_unsave_qty($code, $item->code) : 0;
+				$detail = $this->consignment_model->get_exists_detail($code, $product_code, $price, $discLabel, $input_type);
+				$sum_qty = $qty + $c_qty;
+
+				$id;
+
+				if(empty($detail))
+				{
+					if($sum_qty <= $stock OR $auz === TRUE)
+					{
+						$arr = array(
+						'consign_code' => $code,
+						'product_code' => $item->code,
+						'product_name' => $item->name,
+						'cost' => $item->cost,
+						'price' => $price,
+						'qty' => $qty,
+						'discount' => $discLabel,
+						'discount_amount' => 0,
+						'amount' => $amount,
+						'input_type' => $input_type
+						);
+
+						$id = $this->consignment_model->add_detail($arr);
+
+						if( ! $id)
+						{
+							$sc = FALSE;
+							$this->error = "เพิ่มรายการไม่สำเร็จ";
+						}
+					}
+					else
+					{
+						$sc = FALSE;
+						$this->error = "{$item->code} ยอดในโซนไม่พอตัด  {$sum_qty}/{$stock}";
+					}
+				}
+				else
+				{
+					//-- update new rows
+					//--- ถ้าจำนวนที่ยังไม่บันทึก รวมกับจำนวนใหม่ไม่เกินยอดในโซน หรือ คลังสามารถติดลบได้
+					$id = $detail->id;
+					$new_qty = $qty + $detail->qty;
+
+					if($sum_qty <= $stock OR $auz === TRUE)
+					{
+						$arr = array(
+						'qty' => $new_qty,
+						'discount_amount' => 0,
+						'amount' => $price * $new_qty
+						);
+
+						if( ! $this->consignment_model->update_detail($id, $arr))
+						{
+							$sc = FALSE;
+							$this->error = "ปรับปรุงรายการไม่สำเร็จ";
+						}
+					}
+					else
+					{
+						$sc = FALSE;
+						$this->error = "{$item->code} ยอดในโซนไม่พอตัด  {$sum_qty}/{$stock}";
+					}
+				}
+			}
+		}
+		else
+		{
+			$sc = FALSE;
+			set_error('required');
+		}
+
+		if($sc === TRUE)
+		{
+			$rs = $this->consignment_model->get_detail($id);
+
+			$row = array(
+			'id' => $rs->id,
+			'product_code' => $rs->product_code,
+			'product_name' => $rs->product_name,
+			'price' => number($rs->price,2),
+			'qty' => number($rs->qty, 2),
+			'discount' => $rs->discount,
+			'amount' => number($rs->amount, 2)
+			);
+		}
+
+		$arr = array(
+		'status' => $sc === TRUE ? 'success' : 'failed',
+		'message' => $sc === TRUE ? 'success' : $this->error,
+		'data' => $sc === TRUE ? $row : NULL
+		);
+
+		echo $sc === TRUE ? json_encode($arr) : $this->error;
+	}
+
+
 	public function view_detail($code)
 	{
-		$doc = (object)['code' => 'WD-12345678', 'status' => 0, 'zone_code' => 'AFG-1112'];
-
     $ds = array(
-      'doc' => $doc, //$doc = $this->consignment_model->get($code),
+      'doc' => $doc = $this->consignment_model->get($code),
       'details' => $this->consignment_model->get_details($code)
     );
 
@@ -201,41 +351,41 @@ class Consignment extends PS_Controller
 
 
 	public function get_item_by_barcode()
-  {
+	{
 		$sc = TRUE;
 		$barcode = $this->input->get('barcode');
 		$zone_code = $this->input->get('zone_code');
 
-    if( ! empty($barcode) && ! empty($zone_code))
-    {
-      $this->load->model('stock/stock_model');
-      $item = $this->products_model->get_product_by_barcode($barcode);
+		if( ! empty($barcode) && ! empty($zone_code))
+		{
+			$this->load->model('stock/stock_model');
+			$item = $this->products_model->get_product_by_barcode($barcode);
 
-      if( ! empty($item))
-      {
-        $stock = $item->count_stock == 1 ? $this->stock_model->get_consign_stock_zone($zone_code, $item->code) : 0;
+			if( ! empty($item))
+			{
+				$stock = $item->count_stock == 1 ? $this->stock_model->get_consign_stock_zone($zone_code, $item->code) : 0;
 
-        $ds = array(
-          'product_code' => $item->code,
-          'barcode' => $item->barcode,
-          'product_name' => $item->name,
-          'price' => round($item->price, 2),
-          'disc' => 0,
-          'stock' => $stock,
-          'count_stock' => $item->count_stock
-        );
-      }
-      else
-      {
+				$ds = array(
+					'product_code' => $item->code,
+					'barcode' => $item->barcode,
+					'product_name' => $item->name,
+					'price' => round($item->price, 2),
+					'disc' => 0,
+					'stock' => $stock,
+					'count_stock' => $item->count_stock
+				);
+			}
+			else
+			{
 				$sc = FALSE;
 				$this->error = "ไม่พบรายการสินค้า";
-      }
-    }
-    else
-    {
-      $sc = FALSE;
+			}
+		}
+		else
+		{
+			$sc = FALSE;
 			set_error('required');
-    }
+		}
 
 		$arr = array(
 			'status' => $sc === TRUE ? 'success' : 'failed',
@@ -244,35 +394,35 @@ class Consignment extends PS_Controller
 		);
 
 		echo json_encode($arr);
-  }
+	}
 
 
 	public function get_new_code($date = NULL)
-  {
-    $date = empty($date) ? date('Y-m-d') : $date;
-    $Y = date('y', strtotime($date));
-    $M = date('m', strtotime($date));
-    $prefix = getConfig('PREFIX_CONSIGNMENT_SOLD');
-    $run_digit = getConfig('RUN_DIGIT_CONSIGNMENT_SOLD');
+	{
+		$date = empty($date) ? date('Y-m-d') : $date;
+		$Y = date('y', strtotime($date));
+		$M = date('m', strtotime($date));
+		$prefix = getConfig('PREFIX_CONSIGNMENT_SOLD');
+		$run_digit = getConfig('RUN_DIGIT_CONSIGNMENT_SOLD');
 
 		$prefix = empty($prefix) ? "WD" : $prefix;
 		$run_digit = empty($run_digit) ? 5 : $run_digit;
-    $pre = $prefix .'-'.$Y.$M;
+		$pre = $prefix .'-'.$Y.$M;
 
-    $code = $this->consignment_model->get_max_code($pre);
+		$code = $this->consignment_model->get_max_code($pre);
 
-    if( ! empty($code))
-    {
-      $run_no = mb_substr($code, ($run_digit*-1), NULL, 'UTF-8') + 1;
-      $new_code = $prefix . '-' . $Y . $M . sprintf('%0'.$run_digit.'d', $run_no);
-    }
-    else
-    {
-      $new_code = $prefix . '-' . $Y . $M . sprintf('%0'.$run_digit.'d', '001');
-    }
+		if( ! empty($code))
+		{
+			$run_no = mb_substr($code, ($run_digit*-1), NULL, 'UTF-8') + 1;
+			$new_code = $prefix . '-' . $Y . $M . sprintf('%0'.$run_digit.'d', $run_no);
+		}
+		else
+		{
+			$new_code = $prefix . '-' . $Y . $M . sprintf('%0'.$run_digit.'d', '001');
+		}
 
-    return $new_code;
-  }
+		return $new_code;
+	}
 
 
 	public function clear_filter()

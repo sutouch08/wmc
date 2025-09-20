@@ -6,10 +6,20 @@ window.addEventListener('load', () => {
   //---	กำหนดให้สามารถค้นหาโซนได้ก่อนจะค้นหาลูกค้า(กรณี edit header)
   zoneInit(custCode, false);
   customerInit();
+});
 
-  $('#date').datepicker({
-    dateFormat:'dd-mm-yy'
-  });
+
+$('#date').datepicker({
+  dateFormat:'dd-mm-yy'
+});
+
+
+$('#qty').keyup(function() {
+  let qty = parseDefaultFloat(removeCommas($(this).val()), 0);
+  let price = parseDefaultFloat(removeCommas($('#item-price').val()), 0);
+  let amount = qty * price;
+
+  $('#amount').val(addCommas(amount.toFixed(2)));
 });
 
 
@@ -215,6 +225,20 @@ function getItemByBarcode() {
 }
 
 
+function clearFields() {
+  $('#barcode').val('');
+  $('#item-code').val('');
+  $('#item-name').val('');
+  $('#item-price').val('');
+  $('#item-disc').val(0);
+  $('#stock-qty').text(0);
+  $('#count-stock').val(1);
+  $('#qty').val(1);
+  $('#amount').val(0);
+  $('#item-panel').addClass('hide');
+}
+
+
 function closeItemPanel() {
   $('#item-panel').addClass('hide');
 }
@@ -319,6 +343,62 @@ function customerInit() {
 }
 
 
+function reCalAll() {
+  let totalAmount = 0;
+  let totalQty = 0;
+
+  $('.price').each(function() {
+    let id = $(this).data('id');
+    let price = parseDefaultFloat(removeCommas($('#price-'+id).val()), 0);
+    let qty = parseDefaultFloat(removeCommas($('#qty-'+id).val()), 0);
+    let amount = qty * price;
+    $('#amount-'+id).val(addCommas(amount.toFixed(2)));
+
+    totalAmount += amount;
+    totalQty += qty;
+  });
+
+  $('#total-amount').val(addCommas(totalAmount.toFixed(2)));
+  $('#total-qty').val(addCommas(totalQty.toFixed(2)));
+}
+
+
+function reCal(id) {
+  let qty = parseDefaultFloat(removeCommas($('#qty-'+id).val()), 0);
+  let price = parseDefaultFloat(removeCommas($('#price-'+id).val()), 0);
+  let amount = qty * price;
+
+  $('#amount-'+id).val(addCommas(amount.toFixed(2)));
+
+  updateTotalQty();
+  updateTotalAmount();
+}
+
+
+function updateTotalAmount() {
+  let total = 0;
+
+  $('.amount').each(function() {
+    let amount = parseDefaultFloat(removeCommas($(this).val()), 0);
+    total += amount;
+  });
+
+  $('#total-amount').val(addCommas(total.toFixed(2)));
+}
+
+
+function updateTotalQty() {
+  let total = 0;
+
+  $('.input-qty').each(function() {
+    let qty = parseDefaultFloat(removeCommas($(this).val()), 0);
+    total += qty;
+  });
+
+  $('#total-qty').val(addCommas(total.toFixed(2)));
+}
+
+
 function add() {
   if(click == 0) {
     click = 1;
@@ -396,17 +476,17 @@ function add() {
 }
 
 
-function addToDetail() {
+function addDetail() {
   clearErrorByClass('c');
 
   let h = {
-    'code' : $('#consign_code').val(),
-    'product_code' : $('#product_code').val().trim(),
-    'qty' : parseDefaultFloat($('#item-qty').val(), 1),
+    'code' : $('#code').val(),
+    'product_code' : $('#item-code').val().trim(),
+    'qty' : parseDefaultFloat($('#qty').val(), 0),
     'price' : parseDefaultFloat($('#item-price').val(), 0),
-    'disc' : $('#item-disc').val().trim(),
+    'disc' : $('#item-disc').val(),
     'auz' : $('#auz').val(),
-    'count_stock' : $('#count_stock').val()
+    'count_stock' : $('#count-stock').val()
   }
 
   let stock = parseDefaultFloat($('#stock-qty').val(), 0);
@@ -419,14 +499,14 @@ function addToDetail() {
 
   if(h.qty < 0) {
     beep();
-    $('#item-qty').hasError();
+    $('#qty').hasError();
     return false;
   }
 
   if(h.qty > stock && h.auz == 0 && h.count_stock == 1) {
     beep();
     $('#stock-qty').hasError();
-    $('#item-qty').hasError();
+    $('#qty').hasError();
     return false;
   }
 
@@ -448,20 +528,18 @@ function addToDetail() {
         if(ds.status === 'success') {
           let id = ds.data.id;
 
-          if($('#row-'+id).length) {
+          if($('#list-block-'+id).length) {
             $('#qty-'+id).val(ds.data.qty);
-
             reCal(id);
             clearFields();
           }
           else {
-            let source = $('#new-row-template').html();
+            let source = $('#item-template').html();
             let output = $('#detail-table');
 
             render_prepend(source, ds.data, output);
-            inputInit();
             reIndex();
-            reCalAll();
+            reCal(id);
             clearFields();
           }
         }

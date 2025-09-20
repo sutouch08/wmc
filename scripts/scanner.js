@@ -16,8 +16,8 @@ function readerInit() {
     Html5QrcodeSupportedFormats.CODE_128
   ];
 
-  let qrWidth = 200;
-  let qrHeight = 200;
+  let qrWidth = 250;
+  let qrHeight = 250;
 
   if( scanType == 'barcode') {
     formatToSupport = [
@@ -27,8 +27,8 @@ function readerInit() {
       Html5QrcodeSupportedFormats.CODE_128
     ];
 
-    qrWidth = 300;
-    qrHeight = 100;
+    qrWidth = 250;
+    qrHeight = 250;
   }
 
   if( scanType == 'qrcode') {
@@ -38,7 +38,7 @@ function readerInit() {
   scanner = new Html5Qrcode("reader", {formatsToSupport: formatToSupport});
 
   config = {
-    fps: 60,
+    fps: 10,
     qrbox: {width: qrWidth, height: qrHeight, center: (scanType === 'barcode')},
     experimentalFeatures: {
       useBarCodeDetectorIfSupported: true
@@ -90,14 +90,12 @@ function startScan(actionCallback) {
     changeCameraId();
   }
   else {
-
-    // $('#cam').removeClass('hide');
     $('#reader-backdrop').removeClass('hide');
-    $('.sc').addClass('hide');
 
     scanner.start({deviceId: {exact: camId}}, config, (decodedText, decodedResult) => {
       stopScan();
       $('#scan-result').val(decodedText);
+      console.log(decodedText);
 
       if(actionCallback != null && actionCallback != undefined) {
         actionCallback();
@@ -106,14 +104,11 @@ function startScan(actionCallback) {
         console.log(actionCallback);
       }
     });
-
   }
 }
 
 function stopScan() {
 	scanner.stop().then((ignore) => {
-		// $('#cam').addClass('hide');
     $('#reader-backdrop').addClass('hide');
-    $('.sc').removeClass('hide');
 	});
 }

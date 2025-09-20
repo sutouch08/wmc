@@ -1,54 +1,53 @@
 <?php $this->load->view('include/header_mobile'); ?>
-<div class="nav-title nav-title-center">
+<div class="nav-title nav-title-center" style="position:fixed;">
 	<a onclick="goBack()"><i class="fa fa-angle-left fa-2x"></i></a>
-	<div class="font-size-18 text-center">เพิ่ม ข้อมูลยานพาหนะ</div>
+	<div class="font-size-18 text-center">เพิ่ม เอกสารตัดยอดใหม่</div>
 </div>
-<div class="divider-hidden"></div>
-<div class="row">
-	<div class="form-horizontal page-wrap full">
-		<div class="form-group">
-			<label class="col-sm-3 col-xs-12 control-label no-padding-right">ทะเบียนรถ</label>
-			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-				<input type="text" class="form-control r" id="code" autofocus autocomplete="off" />
-			</div>
-		</div>
+<div class="row padding-top-20">
+	<div class="col-xs-6">
+		<label>วันที่</label>
+		<input type="text" class="form-control text-center r" id="date" value="<?php echo date('d-m-Y'); ?>" readonly />
+	</div>
 
-		<div class="form-group">
-			<label class="col-sm-3 col-xs-12 control-label no-padding-right">น้ำหนัก</label>
-			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-				<input type="number" class="form-control" id="weight" value="0" autocomplete="off"/>
-			</div>
-		</div>
+	<div class="col-xs-6">
+		<label>รหัสลูกค้า</label>
+		<input type="text" class="form-control text-center r" id="customer-code" autofocus autocomplete="off" />
+	</div>
+	<div class="divider-hidden"></div>
 
-		<div class="form-group">
-			<label class="col-sm-3 col-xs-12 control-label no-padding-right">จำนวน Pallet</label>
-			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-				<input type="number" class="form-control" id="pallet" value="0" autocomplete="off"/>
-			</div>
-		</div>
+	<div class="col-xs-12">
+		<label>ลูกค้า</label>
+		<input type="text" class="form-control r" id="customer-name"  />
+	</div>
+	<div class="divider-hidden"></div>
 
-		<div class="form-group">
-			<label class="col-sm-3 col-xs-12 control-label no-padding-right hidden-xs">Active</label>
-			<label class="col-xs-6 visible-xs">Active</label>
-			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 padding-top-5 text-right">
-				<label>
-					<input id="active" class="ace ace-switch ace-switch-5 btn-empty" type="checkbox" value="1" checked>
-					<span class="lbl"></span>
-				</label>
-			</div>
-		</div>
+	<div class="col-xs-12">
+		<label>รหัสโซน</label>
+		<input type="text" class="form-control r" id="zone-code" />
+	</div>
+	<div class="divider-hidden"></div>
 
-		<div class="divider-hidden hidden-xs"></div>
-		<div class="divider-hidden hidden-xs"></div>
+	<div class="col-xs-12">
+		<label>โซน</label>
+		<input type="text" class="form-control r" id="zone-name" />
+	</div>
+	<div class="divider-hidden"></div>
 
-		<div class="form-group">
-			<label class="col-sm-3 col-xs-12 control-label no-padding-right">&nbsp;</label>
-			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-				<button type="button" class="btn btn-sm btn-primary btn-block" onclick="add()">บันทึก</button>
-			</div>
-		</div>
+	<div class="col-xs-12">
+		<label>หมายเหตุ</label>
+		<input type="text" class="form-control r" id="remark" />
+	</div>
+	<div class="divider-hidden"></div>
+	<div class="divider-hidden"></div>
+	<div class="divider-hidden"></div>
+	<div class="divider-hidden"></div>
+	<div class="divider-hidden"></div>
+
+	<div class="col-xs-12">
+		<button type="button" class="btn btn-sm btn-primary btn-block" onclick="add()"><i class="fa fa-plus"></i>&nbsp; &nbsp; เพิ่ม</button>
 	</div>
 </div>
 
-<script src="<?php echo base_url(); ?>scripts/jobs/jobs.js?v=<?php echo date('Ymd'); ?>"></script>
+<script src="<?php echo base_url(); ?>scripts/consignment/consignment.js?v=<?php echo date('Ymd'); ?>"></script>
+<script src="<?php echo base_url(); ?>scripts/consignment/consignment_add.js?v=<?php echo date('Ymd'); ?>"></script>
 <?php $this->load->view('include/footer_mobile'); ?>

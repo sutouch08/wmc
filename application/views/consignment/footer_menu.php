@@ -13,7 +13,7 @@
 			</div>
 		<?php if($doc->status == 0) : ?>
 			<div class="footer-menu">
-				<span class="pg-icon" onclick="startScan('newItem')">
+				<span class="pg-icon" onclick="startScan(getItemByBarcode)">
 					<i class="fa fa-plus fa-2x"></i><span>เพิ่มรายการ</span>
 				</span>
 			</div>

@@ -1,15 +1,3 @@
-<!-- <div id="cam" class="" style="position: fixed; top:45px; left:0; width:100vw; z-index:13;">
-  <div id="reader" style="width:100%;"></div>
-</div>
-<div id="reader-backdrop" class="" style="position: fixed; top:0px; width:100%; height:100vh; background-color:#000000e0; z-index:12;">
-  <p class="text-center" style="position:absolute; bottom:90px; width:100vw;">
-    <a class="text-center" id="btn-stop" href="javascript:stopScan()"
-    style="margin:0px; border:none; border-radius:25px;
-    padding:10px 17px; font-size:24px; line-height:0.8;
-    background-color:salmon; color:black;">&times;</a>
-  </p>
-</div> -->
-
 <style>
   #reader-backdrop {
     position: fixed;
@@ -24,22 +12,100 @@
     align-items: center;
   }
 
-  /* #cam {
+  #cam {
     position: fixed;
     top: 45px;
-    width: 100vw;
-    height: calc(100vh - 120px);
+    /* width: 100vw; */
+    /* height: calc(100vh - 120px); */
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 13;
-  } */
+  }
 
   #reader {
     width: 100vw;
     height: 100vh;
+    display: flex;
+    justify-content:center;
     background-color: white;
   }
+
+  #mark {
+    width: 250px;
+    height: 250px;
+    position: absolute;
+    top: calc(50vh - 170px);
+    left: calc(50vw - 125px);
+    z-index: 102;
+  }
+
+  #mark-top-left {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-top: solid 2px white;
+    border-left: solid 2px white;
+    border-top-left-radius: 5px;
+  }
+
+  #mark-top-right {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-top: solid 2px white;
+    border-right: solid 2px white;
+    border-top-right-radius: 5px;
+  }
+
+  #mark-bottom-left {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border-bottom: solid 2px white;
+    border-left: solid 2px white;
+    border-bottom-left-radius: 5px;
+  }
+
+  #mark-bottom-right {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border-bottom: solid 2px white;
+    border-right: solid 2px white;
+    border-bottom-right-radius: 5px;
+  }
+
+  video {
+    position: absolute;
+    top: 45px;
+    width: auto !important;
+    height: calc(100vh - 165px);
+  }
+
+  #stop-scan {
+    position: absolute;
+    bottom: 45px;
+    display: flex;
+    justify-content: center;
+    padding: 20px 0 0 !important;
+    border: 0;
+    background: none;
+  }
+
+  #qr-shaded-region {
+    display: none;
+  }
+
 </style>
 
 <input type="hidden" id="scan-result" />
@@ -49,7 +115,14 @@
   	<a onclick="stopScan()"><i class="fa fa-angle-left fa-2x"></i></a>
   	<div class="font-size-18 text-center">Scan Barcode</div>
   </div>
-  <div id="cam">
-    <div id="reader"></div>
+  <div id="mark">
+    <div id="mark-top-left"></div>
+    <div id="mark-top-right"></div>
+    <div id="mark-bottom-left"></div>
+    <div id="mark-bottom-right"></div>
+  </div>
+  <div id="reader"></div>
+  <div id="stop-scan">
+    <button type="button" class="btn-close" onclick="stopScan()"><i class="fa fa-times"></i></button>
   </div>
 </div>

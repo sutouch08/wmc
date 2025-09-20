@@ -5,17 +5,19 @@
     left: 0;
     height: 100vh;
     background-color: white;
-    z-index: 10;
-  }
-
-  #item-panel.hide {
-    transition: opacity 0.5s ease-in-out;
-    opacity: 0;
+    z-index: 101;
   }
 
   .item-input {
-    height: calc(100vh - 120px);
     margin-top: 45px;
+    height: calc(100vh - 140px);
+  }
+
+  .submit-btn {
+    position: absolute;
+    bottom: 0px;
+    padding: 30px 15px;
+    border-top: 1px solid #ddd;
   }
 </style>
 
@@ -25,29 +27,43 @@
     <div class="font-size-18 text-center">เพิ่มรายการใหม่</div>
   </div>
   <div class="col-xs-12 page-wrap item-input">
-    <div class="col-xs-12 padding-5 fi">
+    <div class="col-xs-12 fi">
       <label>Barcode</label>
-      <input type="text" class="form-control" id="barcode"  value="" />
+      <input type="text" class="form-control" id="barcode"  value="" readonly />
     </div>
-    <div class="col-xs-12 padding-5 fi">
+    <div class="col-xs-12 fi">
       <label>SKU</label>
-      <input type="text" class="form-control" id="product-code"  value="" />
+      <input type="text" class="form-control" id="item-code"  value="" readonly/>
     </div>
-    <div class="col-xs-12 padding-5 fi">
+    <div class="col-xs-12 fi">
       <label>Description</label>
-      <input type="text" class="form-control" id="product-name"  value="" />
+      <input type="text" class="form-control" id="item-name"  value="" readonly/>
     </div>
-    <div class="col-xs-12 padding-5 fi">
+    <div class="col-xs-6 fi">
       <label>Price</label>
-      <input type="text" class="form-control" id="price"  value="" />
+      <input type="text" class="form-control text-center" id="item-price"  value="" readonly/>
     </div>
-    <div class="col-xs-12 padding-5 fi">
+    <div class="col-xs-6 fi">
+      <label>In Stock</label>
+      <input type="text" class="form-control text-center" id="stock-qty"  value="0" readonly/>
+    </div>
+    <div class="col-xs-6 fi">
       <label>Qty</label>
-      <input type="text" class="form-control" id="qty"  value="" />
+      <input type="text" class="form-control text-center" inputmode="numeric" id="qty"  value="1" />
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 fi">
-      <label class="not-show">Qty</label>
-      <button type="button" class="btn btn-sm btn-primary btn-block" style="border-radius:10px;"><i class="fa fa-plus"></i> Add</button>
+    <div class="col-xs-6 fi">
+      <label>Amount</label>
+      <input type="text" class="form-control text-center" id="amount"  value="0" />
+    </div>
+
+    <input type="hidden" id="count-stock" value="1" />
+    <input type="hidden" id="item-disc" value="0" />
+
+  </div>
+
+  <div class="col-xs-12 submit-btn">
+    <div class="col-xs-12">
+      <button type="button" class="btn btn-sm btn-primary btn-block" onclick="addDetail()"><i class="fa fa-plus"></i> Add</button>
     </div>
   </div>
 </div>

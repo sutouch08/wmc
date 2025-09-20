@@ -17,3 +17,8 @@ $('#toDate').datepicker({
 function viewDetail(code) {
   window.location.href = HOME + 'view_detail/'+code;
 }
+
+
+function addNew() {
+  window.location.href = HOME + 'add_new';
+}

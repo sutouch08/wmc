@@ -12,6 +12,7 @@ class Consignment extends PS_Controller
 		parent::__construct();
 		$this->home = base_url(). "consignment";
 		$this->load->model('account/consignment_model');
+		$this->load->model('masters/products_model');
 		$this->load->helper('consignment');
 		$this->load->helper('warehouse');
 	}
@@ -40,6 +41,53 @@ class Consignment extends PS_Controller
 	public function add_new()
 	{
 		$this->load->view('consignment/add');
+	}
+
+
+	public function add()
+	{
+		$sc = TRUE;
+		$ds = json_decode($this->input->post('data'));
+
+		if( ! empty($ds))
+		{
+			$this->load->model('masters/zone_model');
+
+			$warehouse_code = $this->zone_model->get_warehouse_code($ds->zone_code);
+			$date = db_date($ds->date, TRUE);
+			$code = $this->get_new_code($date);
+
+			$arr = array(
+				'code' => $code,
+				'customer_code' => $ds->customer_code,
+				'customer_name' => $ds->customer_name,
+				'zone_code' => $ds->zone_code,
+				'zone_name' => $ds->zone_name,
+				'warehouse_code' => $warehouse_code,
+				'remark' => get_null($ds->remark),
+				'date_add' => $date,
+				'user' => $this->_user->uname
+			);
+
+			if( ! $this->consignment_model->add($arr))
+			{
+				$sc = FALSE;
+				$this->error = "Failed to create document";
+			}
+		}
+		else
+		{
+			$sc = FALSE;
+			set_error('required');
+		}
+
+		$arr = array(
+			'status' => $sc === TRUE ? 'success' : 'failed',
+			'message' => $sc === TRUE ? 'success' : $this->error,
+			'code' => $sc === TRUE ? $code : NULL
+		);
+
+		echo json_encode($arr);
 	}
 
 
@@ -155,42 +203,75 @@ class Consignment extends PS_Controller
 	public function get_item_by_barcode()
   {
 		$sc = TRUE;
+		$barcode = $this->input->get('barcode');
+		$zone_code = $this->input->get('zone_code');
 
-    if($this->input->get('barcode'))
+    if( ! empty($barcode) && ! empty($zone_code))
     {
-      // $this->load->model('stock/stock_model');
-
-      $barcode = $this->input->get('barcode');
-      $zone_code = $this->input->get('zone_code');
+      $this->load->model('stock/stock_model');
       $item = $this->products_model->get_product_by_barcode($barcode);
 
-      if(!empty($item))
+      if( ! empty($item))
       {
         $stock = $item->count_stock == 1 ? $this->stock_model->get_consign_stock_zone($zone_code, $item->code) : 0;
 
-        $arr = array(
-          'pdCode' => $item->code,
+        $ds = array(
+          'product_code' => $item->code,
           'barcode' => $item->barcode,
-          'product' => $item->code,
+          'product_name' => $item->name,
           'price' => round($item->price, 2),
           'disc' => 0,
           'stock' => $stock,
           'count_stock' => $item->count_stock
         );
-
-        $sc = json_encode($arr);
       }
       else
       {
-        $sc = 'สินค้าไม่ถูกต้อง';
+				$sc = FALSE;
+				$this->error = "ไม่พบรายการสินค้า";
       }
-
-      echo $sc;
     }
     else
     {
-      echo "สินค้าไม่ถูกต้อง";
+      $sc = FALSE;
+			set_error('required');
     }
+
+		$arr = array(
+			'status' => $sc === TRUE ? 'success' : 'failed',
+			'message' => $sc === TRUE ? 'success' : $this->error,
+			'data' => $sc === TRUE ? $ds : NULL
+		);
+
+		echo json_encode($arr);
+  }
+
+
+	public function get_new_code($date = NULL)
+  {
+    $date = empty($date) ? date('Y-m-d') : $date;
+    $Y = date('y', strtotime($date));
+    $M = date('m', strtotime($date));
+    $prefix = getConfig('PREFIX_CONSIGNMENT_SOLD');
+    $run_digit = getConfig('RUN_DIGIT_CONSIGNMENT_SOLD');
+
+		$prefix = empty($prefix) ? "WD" : $prefix;
+		$run_digit = empty($run_digit) ? 5 : $run_digit;
+    $pre = $prefix .'-'.$Y.$M;
+
+    $code = $this->consignment_model->get_max_code($pre);
+
+    if( ! empty($code))
+    {
+      $run_no = mb_substr($code, ($run_digit*-1), NULL, 'UTF-8') + 1;
+      $new_code = $prefix . '-' . $Y . $M . sprintf('%0'.$run_digit.'d', $run_no);
+    }
+    else
+    {
+      $new_code = $prefix . '-' . $Y . $M . sprintf('%0'.$run_digit.'d', '001');
+    }
+
+    return $new_code;
   }
 
 

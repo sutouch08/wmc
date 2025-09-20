@@ -50,6 +50,7 @@
 
 	<input type="hidden" id="code" value="<?php echo $doc->code; ?>" />
 	<input type="hidden" id="zone-code" value="<?php echo $doc->zone_code; ?>" />
+	<input type="hidden" id="auz" value="<?php echo getConfig('ALLOW_UNDER_ZERO'); ?>" />
 </div>
 
 <div class="pg-summary">

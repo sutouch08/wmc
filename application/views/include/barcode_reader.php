@@ -107,10 +107,9 @@
   }
 
   #qr-canvas {
-    width:250px;
-    height: 250px;
     position: absolute;
-    top: calc(50vh - 170px);
+    top: 45px;
+    /* top: calc(50vh - 170px); */
   }
 
 </style>

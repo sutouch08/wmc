@@ -16,8 +16,8 @@ function readerInit() {
     Html5QrcodeSupportedFormats.CODE_128
   ];
 
-  let qrWidth = 250;
-  let qrHeight = 250;
+  let qrWidth = window.innerWidth;
+  let qrHeight = window.innerHeight;
 
   // if( scanType == 'barcode') {
   //   formatToSupport = [

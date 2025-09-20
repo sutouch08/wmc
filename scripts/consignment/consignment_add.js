@@ -482,8 +482,8 @@ function addDetail() {
   let h = {
     'code' : $('#code').val(),
     'product_code' : $('#item-code').val().trim(),
-    'qty' : parseDefaultFloat($('#qty').val(), 0),
-    'price' : parseDefaultFloat($('#item-price').val(), 0),
+    'qty' : parseDefaultFloat(removeCommas($('#qty').val()), 0),
+    'price' : parseDefaultFloat(removeCommas($('#item-price').val()), 0),
     'disc' : $('#item-disc').val(),
     'auz' : $('#auz').val(),
     'count_stock' : $('#count-stock').val()
